@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 2: Create Purchase Order</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Create PO (Draft)</button>
+</form>
+{% endblock %}

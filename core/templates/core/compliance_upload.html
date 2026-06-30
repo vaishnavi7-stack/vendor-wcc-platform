@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 7: Upload Compliance Documents — {{ invoice.invoice_number }}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Upload & Send for PMO Review</button>
+</form>
+<h3>Already uploaded</h3>
+<ul>
+{% for doc in invoice.compliance_docs.all %}
+  <li>{{ doc.document_label }} - <a href="{{ doc.document.url }}">view</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

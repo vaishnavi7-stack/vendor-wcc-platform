@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 1: Onboard Vendor (LOI)</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Create Vendor</button>
+</form>
+{% endblock %}

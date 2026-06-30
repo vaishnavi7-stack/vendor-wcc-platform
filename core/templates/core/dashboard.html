@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+
+{% if role == "ADMIN" or user.is_superuser %}
+  <p><a href="{% url 'onboard_vendor' %}">+ Onboard new vendor (Step 1)</a></p>
+{% endif %}
+{% if role == "PMO" or user.is_superuser %}
+  <p><a href="{% url 'create_po' %}">+ Create Purchase Order (Step 2)</a> &nbsp;|&nbsp;
+     <a href="{% url 'payment_clearance' %}">Payment Clearance Queue (Step 8)</a></p>
+{% endif %}
+
+<h3>{% if role == "VENDOR" %}Your Purchase Orders{% else %}Purchase Orders{% endif %}</h3>
+<table>
+  <tr><th>PO Number</th><th>Vendor</th><th>Status</th><th>Qty Ordered</th><th>Qty Remaining</th><th>Actions</th></tr>
+  {% for po in pos %}
+  <tr>
+    <td>{{ po.po_number }}</td>
+    <td>{{ po.vendor.name }}</td>
+    <td>{{ po.status }}</td>
+    <td>{{ po.total_qty_ordered }}</td>
+    <td>{{ po.qty_remaining }}</td>
+    <td>
+      {% if role == "VENDOR" and po.status == "DRAFT" %}
+        <a href="{% url 'accept_po' po.id %}">Accept PO</a>
+      {% endif %}
+      {% if role == "SITE_ENGINEER" or role == "ADMIN" or user.is_superuser %}
+        <a href="{% url 'log_progress' po.id %}">Log MB Entry</a> |
+      {% endif %}
+      {% if role == "SITE_ENGINEER" or role == "QUALITY" or role == "VERTICAL_LEAD" or role == "ADMIN" or user.is_superuser %}
+        <a href="{% url 'wcc_verification' po.id %}">WCC Matrix</a>
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No purchase orders yet.</td></tr>
+  {% endfor %}
+</table>
+
+{% if vendors %}
+<h3>Vendors</h3>
+<table>
+  <tr><th>Name</th><th>LOI Ref</th><th>Approved</th></tr>
+  {% for v in vendors %}
+  <tr><td>{{ v.name }}</td><td>{{ v.loi_reference }}</td>
+      <td><span class="badge {% if v.is_approved %}yes{% else %}no{% endif %}">{{ v.is_approved }}</span></td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

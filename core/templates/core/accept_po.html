@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 3: Accept Purchase Order</h2>
+<p><strong>PO:</strong> {{ po.po_number }} | <strong>Value:</strong> {{ po.total_value }} | <strong>Qty:</strong> {{ po.total_qty_ordered }} {{ po.unit_of_measure }}</p>
+{% if po.technical_annexure %}<p><a href="{{ po.technical_annexure.url }}">View technical annexure</a></p>{% endif %}
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Accept Contract</button>
+</form>
+{% endblock %}

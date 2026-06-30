@@ -1,0 +1,54 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 5: WCC Verification Matrix — {{ po.po_number }}</h2>
+
+<h3>Log new WCC entry</h3>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" name="create_wcc" value="1">Create WCC Entry</button>
+</form>
+
+<h3>Certificates</h3>
+<table>
+<tr>
+  <th>ID</th><th>Executed Qty</th><th>Passed Qty</th>
+  <th>Engineer</th><th>Quality</th><th>Vertical Lead</th><th>Actions</th>
+</tr>
+{% for wcc in certificates %}
+<tr>
+  <td>{{ wcc.id }}</td>
+  <td>{{ wcc.executed_qty }}</td>
+  <td>{{ wcc.passed_qty }}</td>
+  <td><span class="badge {% if wcc.is_signed_by_engineer %}yes{% else %}no{% endif %}">{{ wcc.is_signed_by_engineer }}</span></td>
+  <td><span class="badge {% if wcc.is_signed_by_quality %}yes{% else %}no{% endif %}">{{ wcc.is_signed_by_quality }}</span></td>
+  <td><span class="badge {% if wcc.is_signed_by_vertical_lead %}yes{% else %}no{% endif %}">{{ wcc.is_signed_by_vertical_lead }}</span></td>
+  <td>
+    {% if role == "SITE_ENGINEER" and not wcc.is_signed_by_engineer %}
+      <form method="post" style="display:inline">{% csrf_token %}
+        <input type="hidden" name="wcc_id" value="{{ wcc.id }}">
+        <button type="submit" name="sign" value="engineer">Sign (Engineer)</button>
+      </form>
+    {% endif %}
+    {% if role == "QUALITY" and wcc.is_signed_by_engineer and not wcc.is_signed_by_quality %}
+      <form method="post" style="display:inline">{% csrf_token %}
+        <input type="hidden" name="wcc_id" value="{{ wcc.id }}">
+        <button type="submit" name="sign" value="quality">Sign (Quality)</button>
+      </form>
+    {% endif %}
+    {% if role == "VERTICAL_LEAD" and wcc.is_signed_by_quality and not wcc.is_signed_by_vertical_lead %}
+      <form method="post" style="display:inline">{% csrf_token %}
+        <input type="hidden" name="wcc_id" value="{{ wcc.id }}">
+        <button type="submit" name="sign" value="vertical_lead">Sign (Vertical Lead)</button>
+      </form>
+    {% endif %}
+    {% if wcc.is_fully_certified %}
+      <span class="badge yes">Fully Certified</span>
+    {% endif %}
+  </td>
+</tr>
+{% empty %}
+<tr><td colspan="7">No WCC entries yet.</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

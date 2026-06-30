@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{% block title %}Vendor WCC Platform{% endblock %}</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 16px; color: #222; }
+  nav { display: flex; gap: 16px; border-bottom: 1px solid #ddd; padding-bottom: 12px; margin-bottom: 20px; }
+  nav a { text-decoration: none; color: #2952cc; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 14px; }
+  th { background: #f5f6fa; }
+  .msg { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+  .msg.success { background: #e3f7e3; border: 1px solid #8fd98f; }
+  .msg.error { background: #fde2e2; border: 1px solid #f5a3a3; }
+  form p { margin: 8px 0; }
+  button, input[type=submit] { background: #2952cc; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  .badge.yes { background: #d6f5d6; color: #1a7a1a; }
+  .badge.no { background: #f0f0f0; color: #888; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="{% url 'dashboard' %}">Dashboard</a>
+  {% if user.is_authenticated %}
+    <span style="margin-left:auto; color:#666;">{{ user.username }} ({{ request.user.profile.role|default:"admin" }})</span>
+    <a href="{% url 'logout' %}">Logout</a>
+  {% else %}
+    <a href="{% url 'login' %}">Login</a>
+  {% endif %}
+</nav>
+{% for message in messages %}
+  <div class="msg {{ message.tags }}">{{ message }}</div>
+{% endfor %}
+{% block content %}{% endblock %}
+</body>
+</html>

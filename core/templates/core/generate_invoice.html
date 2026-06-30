@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Step 6: Generate Invoice</h2>
+<p>WCC #{{ wcc.id }} — Certified passed qty: <strong>{{ wcc.passed_qty }}</strong></p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit Invoice</button>
+</form>
+{% endblock %}
